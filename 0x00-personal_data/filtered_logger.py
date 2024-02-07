@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
+
 """
-Personal data
+Module for handling Personal Data
 """
 
 from re import sub
 from typing import List
 import logging
+
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 
 def filter_datum(
@@ -16,6 +19,17 @@ def filter_datum(
         res = sub(f"{field}=[^{separator}]+", f"{field}={redaction}", message)
         message = res
     return res
+
+
+def get_logger():
+    """get_logger"""
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
+    logger.addHandler(stream_handler)
+    return logger
 
 
 class RedactingFormatter(logging.Formatter):
