@@ -7,6 +7,8 @@ Module for handling Personal Data
 from re import sub
 from typing import List
 import logging
+from os import environ
+import mysql.connector
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
@@ -14,7 +16,7 @@ PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 def filter_datum(
     fields: List[str], redaction: str, message: str, separator: str
 ) -> str:
-    """filter_datum"""
+    """filter_datum function"""
     for field in fields:
         res = sub(f"{field}=[^{separator}]+", f"{field}={redaction}", message)
         message = res
@@ -22,7 +24,7 @@ def filter_datum(
 
 
 def get_logger():
-    """get_logger"""
+    """get_logger function"""
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
     logger.propagate = False
@@ -30,6 +32,28 @@ def get_logger():
     stream_handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
     logger.addHandler(stream_handler)
     return logger
+
+
+PERSONAL_DATA_DB_USERNAME = "root"
+PERSONAL_DATA_DB_PASSWORD = "root"
+PERSONAL_DATA_DB_HOST = "localhost"
+PERSONAL_DATA_DB_NAME = "my_db"
+
+
+def get_db():
+    """get_db function"""
+    host_env = environ.get(PERSONAL_DATA_DB_HOST, "localhost")
+    database_env = environ.get(PERSONAL_DATA_DB_NAME)
+    user_env = environ.get(PERSONAL_DATA_DB_USERNAME, "root")
+    pass_env = environ.get(PERSONAL_DATA_DB_PASSWORD, "")
+
+    db = mysql.connector.connect(
+        host=host_env,
+        database=database_env,
+        user=user_env,
+        password=pass_env,
+    )
+    return db
 
 
 class RedactingFormatter(logging.Formatter):
