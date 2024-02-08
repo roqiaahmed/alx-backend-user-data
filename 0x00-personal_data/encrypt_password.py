@@ -5,10 +5,9 @@ Encrypting passwords
 """
 
 import bcrypt
-from typing import ByteString
 
 
-def hash_password(password: str) -> ByteString:
+def hash_password(password: str) -> bytes:
     """Hash password function"""
     bytes = password.encode("utf-8")
     salt = bcrypt.gensalt()
