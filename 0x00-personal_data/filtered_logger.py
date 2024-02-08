@@ -34,18 +34,12 @@ def get_logger():
     return logger
 
 
-PERSONAL_DATA_DB_USERNAME = "root"
-PERSONAL_DATA_DB_PASSWORD = "root"
-PERSONAL_DATA_DB_HOST = "localhost"
-PERSONAL_DATA_DB_NAME = "my_db"
-
-
 def get_db():
     """get_db function"""
-    host_env = environ.get(PERSONAL_DATA_DB_HOST, "localhost")
-    database_env = environ.get(PERSONAL_DATA_DB_NAME)
-    user_env = environ.get(PERSONAL_DATA_DB_USERNAME, "root")
-    pass_env = environ.get(PERSONAL_DATA_DB_PASSWORD, "")
+    host_env = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
+    database_env = environ.get("PERSONAL_DATA_DB_NAME")
+    user_env = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
+    pass_env = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
 
     db = mysql.connector.connect(
         host=host_env,
