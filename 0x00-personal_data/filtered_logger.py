@@ -7,7 +7,7 @@ Module for handling Personal Data
 from re import sub
 from typing import List
 import logging
-from os import environ
+from os import getenv
 import mysql.connector
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
@@ -16,15 +16,15 @@ PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 def filter_datum(
     fields: List[str], redaction: str, message: str, separator: str
 ) -> str:
-    """filter_datum function"""
+    """Filter datum function"""
     for field in fields:
         res = sub(f"{field}=[^{separator}]+", f"{field}={redaction}", message)
         message = res
     return res
 
 
-def get_logger():
-    """get_logger function"""
+def get_logger() -> logging.Logger:
+    """Get logger function"""
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
     logger.propagate = False
@@ -34,12 +34,12 @@ def get_logger():
     return logger
 
 
-def get_db():
-    """get_db function"""
-    host_env = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
-    database_env = environ.get("PERSONAL_DATA_DB_NAME")
-    user_env = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
-    pass_env = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """Get db function"""
+    host_env = getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    database_env = getenv("PERSONAL_DATA_DB_NAME")
+    user_env = getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    pass_env = getenv("PERSONAL_DATA_DB_PASSWORD", "")
 
     db = mysql.connector.connect(
         host=host_env,
@@ -66,4 +66,24 @@ class RedactingFormatter(logging.Formatter):
         record.msg = filter_datum(
             self.fields, self.REDACTION, record.getMessage(), self.SEPARATOR
         )
-        print(super(RedactingFormatter, self).format(record))
+        return super(RedactingFormatter, self).format(record)
+
+
+def main():
+    """Main function"""
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users;")
+    field_names = [i[0] for i in cursor.description]
+    logger = get_logger()
+    for row in cursor:
+        info_answer = ""
+        for k, r in zip(field_names, row):
+            info_answer += f"{k}={r}; "
+        logger.info(info_answer)
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
