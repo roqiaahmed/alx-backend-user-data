@@ -4,7 +4,7 @@
 Module for handling Personal Data
 """
 
-from re import sub
+import re
 from typing import List
 import logging
 from os import getenv
@@ -18,7 +18,7 @@ def filter_datum(
 ) -> str:
     """Filter datum function"""
     for field in fields:
-        res = sub(f"{field}=[^{separator}]+", f"{field}={redaction}", message)
+        res = re.sub(f"{field}=[^{separator}]+", f"{field}={redaction}", message)
         message = res
     return res
 
