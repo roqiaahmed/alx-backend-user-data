@@ -34,7 +34,7 @@ def unauthorized():
     abort(401)
 
 
-@app_views.route("/forbidden")
+@app_views.route("/forbidden", strict_slashes=False, methods=["GET"])
 def forbidden():
     """forbidden handler"""
     abort(403)
