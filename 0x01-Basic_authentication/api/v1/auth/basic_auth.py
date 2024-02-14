@@ -36,6 +36,7 @@ class BasicAuth(Auth):
     def extract_user_credentials(
         self, decoded_base64_authorization_header: str
     ) -> Tuple[str, str]:
+        """extract user credentials"""
         u_credential = str(decoded_base64_authorization_header).split(":")
         if (
             not decoded_base64_authorization_header
