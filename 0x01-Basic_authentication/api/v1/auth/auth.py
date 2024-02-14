@@ -27,6 +27,6 @@ class Auth:
             return None
         return auth
 
-    def current_user(self, request=None) -> TypeVar("User"):
+    def current_user(self, request=None) -> TypeVar("User"):  # type: ignore
         """current user function"""
         return None

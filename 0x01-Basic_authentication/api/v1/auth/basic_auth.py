@@ -49,7 +49,7 @@ class BasicAuth(Auth):
 
     def user_object_from_credentials(
         self, user_email: str, user_pwd: str
-    ) -> TypeVar("User"):
+    ) -> TypeVar("User"):  # type: ignore
         """user object from credentials"""
         if (
             not user_email
@@ -65,3 +65,26 @@ class BasicAuth(Auth):
             return user[0]
         except Exception as e:
             return None
+
+    def current_user(self, request=None) -> TypeVar("User"):  # type: ignore
+        """current user"""
+        auth_header = self.authorization_header(request)
+        if not auth_header:
+            return None
+
+        incode_auth = self.extract_base64_authorization_header(auth_header)
+        if not incode_auth:
+            return None
+
+        decode_auth = self.decode_base64_authorization_header(incode_auth)
+        if not decode_auth:
+            return None
+
+        email, pwd = self.extract_user_credentials(decode_auth)
+
+        if not email or not pwd:
+            return None
+
+        user = self.user_object_from_credentials(email, pwd)
+
+        return user
