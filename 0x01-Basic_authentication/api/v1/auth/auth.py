@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Module of Auth class 
+""" Module of Auth class
 """
 
 from typing import List, TypeVar
@@ -27,6 +27,6 @@ class Auth:
             return None
         return auth
 
-    def current_user(self, request=None) -> TypeVar("User"):  # type: ignore
+    def current_user(self, request=None) -> TypeVar("User"):
         """current user function"""
         return None

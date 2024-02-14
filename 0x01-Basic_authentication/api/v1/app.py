@@ -53,9 +53,9 @@ def forbidden(error) -> str:
 @app.before_request
 def do_something_before_request():
     """do something before request"""
-    f_paths = ["/api/v1/status/", "/api/v1/unauthorized/", "/api/v1/forbidden/"]
+    paths = ["/api/v1/status/", "/api/v1/unauthorized/", "/api/v1/forbidden/"]
     curr_path = request.path
-    require_auth = auth.require_auth(curr_path, f_paths)
+    require_auth = auth.require_auth(curr_path, paths)
     if auth is None:
         return
     if not require_auth:

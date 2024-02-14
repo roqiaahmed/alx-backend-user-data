@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-""" Module of Auth class 
+""" Module of Auth class
 """
 
 from .auth import Auth
-import base64, binascii
+import binascii
+import base64
+from typing import Tuple
 
 
 class BasicAuth(Auth):
@@ -30,3 +32,15 @@ class BasicAuth(Auth):
             return data.decode("utf-8")
         except binascii.Error as e:
             return None
+
+    def extract_user_credentials(
+        self, decoded_base64_authorization_header: str
+    ) -> Tuple[str, str]:
+        u_credential = str(decoded_base64_authorization_header).split(":")
+        if (
+            not decoded_base64_authorization_header
+            or type(decoded_base64_authorization_header) != str
+            or len(u_credential) == 1
+        ):
+            return (None, None)
+        return tuple(u_credential)
