@@ -3,6 +3,7 @@
 auth class
 """
 
+import uuid
 import bcrypt
 from db import DB
 from user import User
@@ -14,6 +15,10 @@ def _hash_password(password):
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(bytes, salt)
     return hashed_password
+
+
+def _generate_uuid() -> str:
+    return uuid()
 
 
 class Auth:
