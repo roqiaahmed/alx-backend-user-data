@@ -12,8 +12,8 @@ from sqlalchemy.orm.exc import NoResultFound
 def _hash_password(password):
     bytes = password.encode()
     salt = bcrypt.gensalt()
-    hash = bcrypt.hashpw(bytes, salt)
-    return hash
+    hashed_password = bcrypt.hashpw(bytes, salt)
+    return hashed_password
 
 
 class Auth:
@@ -30,3 +30,14 @@ class Auth:
             raise ValueError(f"User {email} already exists")
         except NoResultFound:
             return self._db.add_user(email, _hash_password(password))
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """valid login method"""
+        try:
+            user = self._db.find_user_by(email=email)
+            if user:
+                userBytes = password.encode("utf-8")
+                return bcrypt.checkpw(userBytes, user.hashed_password)
+            return False
+        except NoResultFound:
+            return False

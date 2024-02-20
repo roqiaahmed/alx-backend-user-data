@@ -4,7 +4,6 @@
 
 from flask import Flask, jsonify, request
 from auth import Auth
-from sqlalchemy.orm.exc import NoResultFound
 
 app = Flask(__name__)
 AUTH = Auth()
